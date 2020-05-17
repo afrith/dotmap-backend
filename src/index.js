@@ -7,6 +7,7 @@ import winston from 'winston'
 import { connectPg } from './db'
 import { cacheResult } from './cache'
 import { getTile } from './tiles'
+import { getVecTile } from './vectiles'
 
 const logger = winston.createLogger({
   format: winston.format.simple(),
@@ -34,6 +35,24 @@ router.get('/tiles/:theme/:z(\\d+)/:x(\\d+)/:y(\\d+).png',
     const y = parseInt(ctx.params.y)
 
     const tile = await getTile(ctx.pg, ctx.params.theme, z, x, y)
+    if (!tile) ctx.throw(404)
+    ctx.body = tile
+  }
+)
+
+router.get('/tiles/:theme/:z(\\d+)/:x(\\d+)/:y(\\d+).mvt',
+  connectPg,
+  async (ctx, next) => {
+    ctx.set('Content-Type', 'application/vnd.mapbox-vector-tile')
+    return next()
+  },
+  cacheResult,
+  async ctx => {
+    const z = parseInt(ctx.params.z)
+    const x = parseInt(ctx.params.x)
+    const y = parseInt(ctx.params.y)
+
+    const tile = await getVecTile(ctx.pg, ctx.params.theme, z, x, y)
     if (!tile) ctx.throw(404)
     ctx.body = tile
   }

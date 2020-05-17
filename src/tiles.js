@@ -67,7 +67,7 @@ export const getTile = async (dbclient, theme, z, x, y) => {
   return canvas.toBuffer('image/png')
 }
 
-export const validateTileCoords = (z, x, y) => {
+const validateTileCoords = (z, x, y) => {
   if (z < 6 || z > 14) return false
   const maxtile = 2 ** z
   if (x < 0 || y < 0 || x >= maxtile || y >= maxtile) return false
