@@ -3,6 +3,7 @@ import Router from '@koa/router'
 import cors from '@koa/cors'
 import koaLogger from 'koa-logger'
 import winston from 'winston'
+import proxy from 'koa-proxies'
 
 import { connectPg } from './db'
 import { cacheResult } from './cache'
@@ -57,6 +58,11 @@ router.get('/tiles/:theme/:z(\\d+)/:x(\\d+)/:y(\\d+).mvt',
     ctx.body = tile
   }
 )
+
+app.use(proxy('/ngi-aerial', {
+  target: 'http://aerial.openstreetmap.org.za/ngi-aerial',
+  changeOrigin: true
+}))
 
 app.use(router.routes()).use(router.allowedMethods())
 
