@@ -60,8 +60,9 @@ router.get('/tiles/:theme/:z(\\d+)/:x(\\d+)/:y(\\d+).mvt',
 )
 
 app.use(proxy('/ngi-aerial', {
-  target: 'http://aerial.openstreetmap.org.za/ngi-aerial',
-  changeOrigin: true
+  target: 'https://aerial.openstreetmap.org.za/',
+  changeOrigin: true,
+  rewrite: path => path.replace('/ngi-aerial', '/layer/ngi-aerial')
 }))
 
 app.use(router.routes()).use(router.allowedMethods())
